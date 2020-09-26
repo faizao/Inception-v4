@@ -42,20 +42,20 @@ def inception_resnet_stem(input):
     # Input Shape is 299 x 299 x 3 (th) or 3 x 299 x 299 (th)
     c = Convolution2D(32, 3, 3, activation='relu', subsample=(2, 2))(input)
     c = Convolution2D(32, 3, 3, activation='relu', )(c)
-    c = Convolution2D(64, 3, 3, activation='relu', border_mode='same')(c)
+    c = Convolution2D(64, 3, 3, activation='relu', padding='same')(c)
 
     c1 = MaxPooling2D((3, 3), strides=(2, 2))(c)
     c2 = Convolution2D(96, 3, 3, activation='relu', subsample=(2, 2))(c)
 
     m = merge([c1, c2], mode='concat', concat_axis=channel_axis)
 
-    c1 = Convolution2D(64, 1, 1, activation='relu', border_mode='same')(m)
+    c1 = Convolution2D(64, 1, 1, activation='relu', padding='same')(m)
     c1 = Convolution2D(96, 3, 3, activation='relu', )(c1)
 
-    c2 = Convolution2D(64, 1, 1, activation='relu', border_mode='same')(m)
-    c2 = Convolution2D(64, 7, 1, activation='relu', border_mode='same')(c2)
-    c2 = Convolution2D(64, 1, 7, activation='relu', border_mode='same')(c2)
-    c2 = Convolution2D(96, 3, 3, activation='relu', border_mode='valid')(c2)
+    c2 = Convolution2D(64, 1, 1, activation='relu', padding='same')(m)
+    c2 = Convolution2D(64, 7, 1, activation='relu', padding='same')(c2)
+    c2 = Convolution2D(64, 1, 7, activation='relu', padding='same')(c2)
+    c2 = Convolution2D(96, 3, 3, activation='relu', padding='valid')(c2)
 
     m2 = merge([c1, c2], mode='concat', concat_axis=channel_axis)
 
@@ -76,18 +76,18 @@ def inception_resnet_v2_A(input, scale_residual=True):
     # Input is relu activation
     init = input
 
-    ir1 = Convolution2D(32, 1, 1, activation='relu', border_mode='same')(input)
+    ir1 = Convolution2D(32, 1, 1, activation='relu', padding='same')(input)
 
-    ir2 = Convolution2D(32, 1, 1, activation='relu', border_mode='same')(input)
-    ir2 = Convolution2D(32, 3, 3, activation='relu', border_mode='same')(ir2)
+    ir2 = Convolution2D(32, 1, 1, activation='relu', padding='same')(input)
+    ir2 = Convolution2D(32, 3, 3, activation='relu', padding='same')(ir2)
 
-    ir3 = Convolution2D(32, 1, 1, activation='relu', border_mode='same')(input)
-    ir3 = Convolution2D(48, 3, 3, activation='relu', border_mode='same')(ir3)
-    ir3 = Convolution2D(64, 3, 3, activation='relu', border_mode='same')(ir3)
+    ir3 = Convolution2D(32, 1, 1, activation='relu', padding='same')(input)
+    ir3 = Convolution2D(48, 3, 3, activation='relu', padding='same')(ir3)
+    ir3 = Convolution2D(64, 3, 3, activation='relu', padding='same')(ir3)
 
     ir_merge = merge([ir1, ir2, ir3], concat_axis=channel_axis, mode='concat')
 
-    ir_conv = Convolution2D(384, 1, 1, activation='linear', border_mode='same')(ir_merge)
+    ir_conv = Convolution2D(384, 1, 1, activation='linear', padding='same')(ir_merge)
     if scale_residual: ir_conv = Lambda(lambda x: x * 0.1)(ir_conv)
 
     out = merge([init, ir_conv], mode='sum')
@@ -104,15 +104,15 @@ def inception_resnet_v2_B(input, scale_residual=True):
     # Input is relu activation
     init = input
 
-    ir1 = Convolution2D(192, 1, 1, activation='relu', border_mode='same')(input)
+    ir1 = Convolution2D(192, 1, 1, activation='relu', padding='same')(input)
 
-    ir2 = Convolution2D(128, 1, 1, activation='relu', border_mode='same')(input)
-    ir2 = Convolution2D(160, 1, 7, activation='relu', border_mode='same')(ir2)
-    ir2 = Convolution2D(192, 7, 1, activation='relu', border_mode='same')(ir2)
+    ir2 = Convolution2D(128, 1, 1, activation='relu', padding='same')(input)
+    ir2 = Convolution2D(160, 1, 7, activation='relu', padding='same')(ir2)
+    ir2 = Convolution2D(192, 7, 1, activation='relu', padding='same')(ir2)
 
     ir_merge = merge([ir1, ir2], mode='concat', concat_axis=channel_axis)
 
-    ir_conv = Convolution2D(1152, 1, 1, activation='linear', border_mode='same')(ir_merge)
+    ir_conv = Convolution2D(1152, 1, 1, activation='linear', padding='same')(ir_merge)
     if scale_residual: ir_conv = Lambda(lambda x: x * 0.1)(ir_conv)
 
     out = merge([init, ir_conv], mode='sum')
@@ -129,15 +129,15 @@ def inception_resnet_v2_C(input, scale_residual=True):
     # Input is relu activation
     init = input
 
-    ir1 = Convolution2D(192, 1, 1, activation='relu', border_mode='same')(input)
+    ir1 = Convolution2D(192, 1, 1, activation='relu', padding='same')(input)
 
-    ir2 = Convolution2D(192, 1, 1, activation='relu', border_mode='same')(input)
-    ir2 = Convolution2D(224, 1, 3, activation='relu', border_mode='same')(ir2)
-    ir2 = Convolution2D(256, 3, 1, activation='relu', border_mode='same')(ir2)
+    ir2 = Convolution2D(192, 1, 1, activation='relu', padding='same')(input)
+    ir2 = Convolution2D(224, 1, 3, activation='relu', padding='same')(ir2)
+    ir2 = Convolution2D(256, 3, 1, activation='relu', padding='same')(ir2)
 
     ir_merge = merge([ir1, ir2], mode='concat', concat_axis=channel_axis)
 
-    ir_conv = Convolution2D(2144, 1, 1, activation='linear', border_mode='same')(ir_merge)
+    ir_conv = Convolution2D(2144, 1, 1, activation='linear', padding='same')(ir_merge)
     if scale_residual: ir_conv = Lambda(lambda x: x * 0.1)(ir_conv)
 
     out = merge([init, ir_conv], mode='sum')
@@ -156,8 +156,8 @@ def reduction_A(input, k=192, l=224, m=256, n=384):
 
     r2 = Convolution2D(n, 3, 3, activation='relu', subsample=(2,2))(input)
 
-    r3 = Convolution2D(k, 1, 1, activation='relu', border_mode='same')(input)
-    r3 = Convolution2D(l, 3, 3, activation='relu', border_mode='same')(r3)
+    r3 = Convolution2D(k, 1, 1, activation='relu', padding='same')(input)
+    r3 = Convolution2D(l, 3, 3, activation='relu', padding='same')(r3)
     r3 = Convolution2D(m, 3, 3, activation='relu', subsample=(2,2))(r3)
 
     m = merge([r1, r2, r3], mode='concat', concat_axis=channel_axis)
@@ -172,16 +172,16 @@ def reduction_resnet_v2_B(input):
     else:
         channel_axis = -1
 
-    r1 = MaxPooling2D((3,3), strides=(2,2), border_mode='valid')(input)
+    r1 = MaxPooling2D((3,3), strides=(2,2), padding='valid')(input)
 
-    r2 = Convolution2D(256, 1, 1, activation='relu', border_mode='same')(input)
+    r2 = Convolution2D(256, 1, 1, activation='relu', padding='same')(input)
     r2 = Convolution2D(384, 3, 3, activation='relu', subsample=(2,2))(r2)
 
-    r3 = Convolution2D(256, 1, 1, activation='relu', border_mode='same')(input)
+    r3 = Convolution2D(256, 1, 1, activation='relu', padding='same')(input)
     r3 = Convolution2D(288, 3, 3, activation='relu', subsample=(2, 2))(r3)
 
-    r4 = Convolution2D(256, 1, 1, activation='relu', border_mode='same')(input)
-    r4 = Convolution2D(288, 3, 3, activation='relu', border_mode='same')(r4)
+    r4 = Convolution2D(256, 1, 1, activation='relu', padding='same')(input)
+    r4 = Convolution2D(288, 3, 3, activation='relu', padding='same')(r4)
     r4 = Convolution2D(320, 3, 3, activation='relu', subsample=(2, 2))(r4)
 
     m = merge([r1, r2, r3, r4], concat_axis=channel_axis, mode='concat')
@@ -219,7 +219,7 @@ def create_inception_resnet_v2(nb_classes=1001, scale=True):
 
     # Auxiliary tower
     aux_out = AveragePooling2D((5, 5), strides=(3, 3))(x)
-    aux_out = Convolution2D(128, 1, 1, border_mode='same', activation='relu')(aux_out)
+    aux_out = Convolution2D(128, 1, 1, padding='same', activation='relu')(aux_out)
     aux_out = Convolution2D(768, 5, 5, activation='relu')(aux_out)
     aux_out = Flatten()(aux_out)
     aux_out = Dense(nb_classes, activation='softmax')(aux_out)
